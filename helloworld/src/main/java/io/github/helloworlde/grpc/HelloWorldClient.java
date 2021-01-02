@@ -2,9 +2,11 @@ package io.github.helloworlde.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class HelloWorldClient {
 
 
@@ -20,7 +22,7 @@ public class HelloWorldClient {
                                            .build();
 
         HelloResponse helloResponse = blockingStub.sayHello(message);
-        System.out.println(helloResponse.getMessage());
+        log.info(helloResponse.getMessage());
 
         channel.awaitTermination(5, TimeUnit.SECONDS);
     }

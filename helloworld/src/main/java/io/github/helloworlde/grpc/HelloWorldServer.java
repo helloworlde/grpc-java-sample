@@ -3,11 +3,13 @@ package io.github.helloworlde.grpc;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class HelloWorldServer {
 
 
@@ -18,7 +20,7 @@ public class HelloWorldServer {
 
         try {
             server.start();
-            System.out.println("服务端启动成功");
+            log.info("服务端启动成功");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,10 +43,12 @@ public class HelloWorldServer {
 
 }
 
+@Slf4j
 class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
+
     @Override
     public void sayHello(HelloMessage request, StreamObserver<HelloResponse> responseObserver) {
-        System.out.println("收到客户端请求: " + request.getMessage());
+        log.info("收到客户端请求: " + request.getMessage());
 
         HelloResponse response = HelloResponse.newBuilder()
                                               .setMessage("Hello " + request.getMessage())

@@ -15,14 +15,15 @@ repositories {
 
 val grpcVersion = "1.34.1"
 val protocVersion = "3.12.0"
+val slf4jVersion = "1.7.25"
 
 dependencies {
-    // This dependency is used by the application.
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
+    implementation("org.slf4j:slf4j-api:${slf4jVersion}")
+    implementation("org.slf4j:slf4j-simple:${slf4jVersion}")
 
-    // Use JUnit test framework
     testImplementation("junit:junit:4.13")
 }
 
