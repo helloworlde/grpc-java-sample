@@ -14,10 +14,13 @@ public class HelloWorldServer {
 
     @SneakyThrows
     public static void main(String[] args) {
+        // 构建 Server
         Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
+                                          // 添加服务
                                           .addService(new HelloServiceImpl())
                                           .build();
 
+        // 启动 Server
         server.start();
         log.info("服务端启动成功");
 
@@ -29,6 +32,7 @@ public class HelloWorldServer {
             }
         }));
 
+        // 保持运行
         server.awaitTermination();
     }
 }
@@ -40,11 +44,14 @@ class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
     public void sayHello(HelloMessage request, StreamObserver<HelloResponse> responseObserver) {
         log.info("收到客户端请求: " + request.getMessage());
 
+        // 构建响应
         HelloResponse response = HelloResponse.newBuilder()
                                               .setMessage("Hello " + request.getMessage())
                                               .build();
 
+        // 发送响应
         responseObserver.onNext(response);
+        // 结束请求
         responseObserver.onCompleted();
     }
 }
