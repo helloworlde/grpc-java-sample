@@ -140,6 +140,8 @@ public class HelloWorldServer {
 
 ## 实现 Client 端
 
+使用 BlockingStub 发起请求，这个调用是同步的，会阻塞直到 Server 端返回结果；调用方法的返回值是
+
 ```java
 
 @Slf4j

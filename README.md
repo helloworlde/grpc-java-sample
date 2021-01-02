@@ -6,9 +6,8 @@ gRPC Java 相关功能简单使用
 
 |模块|功能|
 |:--|:---|
-|[helloworld](helloworld/README.md)| 最简单的调用实例|
-|BlockingStub| 阻塞调用|
-|FutureStub| 异步调用|
+|[helloworld](helloworld)| 最简单的调用实例|
+|[FutureStub](future-stub)| 异步调用|
 |Stub|通过回调调用|
 |server-stream|server端流|
 |client-stream| 客户端流|
