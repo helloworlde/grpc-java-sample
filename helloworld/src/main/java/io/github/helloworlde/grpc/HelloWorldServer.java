@@ -3,27 +3,23 @@ package io.github.helloworlde.grpc;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class HelloWorldServer {
 
-
+    @SneakyThrows
     public static void main(String[] args) {
         Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
                                           .addService(new HelloServiceImpl())
                                           .build();
 
-        try {
-            server.start();
-            log.info("服务端启动成功");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        server.start();
+        log.info("服务端启动成功");
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -33,14 +29,8 @@ public class HelloWorldServer {
             }
         }));
 
-        try {
-            server.awaitTermination();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        server.awaitTermination();
     }
-
-
 }
 
 @Slf4j

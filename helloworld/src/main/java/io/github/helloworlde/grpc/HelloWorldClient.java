@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HelloWorldClient {
 
-
     public static void main(String[] args) throws InterruptedException {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("127.0.0.1", 9090)
                                                       .usePlaintext()
