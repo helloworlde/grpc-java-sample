@@ -8,18 +8,18 @@
 // 使用 Channel 构建 FutureStub
 HelloServiceGrpc.HelloServiceFutureStub futureStub = HelloServiceGrpc.newFutureStub(channel);
 
-        // 构建消息
-        HelloMessage message = HelloMessage.newBuilder()
-        .setMessage("Blocking Stub")
-        .build();
+// 构建消息
+HelloMessage message = HelloMessage.newBuilder()
+                                   .setMessage("Blocking Stub")
+                                   .build();
 
-        // 发送消息，返回 Future
-        ListenableFuture<HelloResponse> future = futureStub.sayHello(message);
+// 发送消息，返回 Future
+ListenableFuture<HelloResponse> future = futureStub.sayHello(message);
 
-        future.addListener(() -> {
-        log.info("Server 端返回响应");
-        }, Executors.newCachedThreadPool());
+future.addListener(() -> {
+    log.info("Server 端返回响应");
+}, Executors.newCachedThreadPool());
 
-        HelloResponse helloResponse = future.get(5, TimeUnit.SECONDS);
-        log.info(helloResponse.getMessage());
+HelloResponse helloResponse = future.get(5, TimeUnit.SECONDS);
+log.info(helloResponse.getMessage());
 ```
