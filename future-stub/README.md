@@ -10,7 +10,7 @@ HelloServiceGrpc.HelloServiceFutureStub futureStub = HelloServiceGrpc.newFutureS
 
 // 构建消息
 HelloMessage message = HelloMessage.newBuilder()
-                                   .setMessage("Blocking Stub")
+                                   .setMessage("Future Stub")
                                    .build();
 
 // 发送消息，返回 Future
