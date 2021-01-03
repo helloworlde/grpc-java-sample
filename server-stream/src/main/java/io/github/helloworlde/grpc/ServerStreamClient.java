@@ -17,6 +17,7 @@ public class ServerStreamClient {
                                                       .build();
 
         // 使用 Channel 构建 BlockingStub
+        // 这里用 FutureStub 或者 AsyncStub 也是类似的，返回值变成 Future 或者传入 StreamObserver 即可
         HelloServiceGrpc.HelloServiceBlockingStub blockingStub = HelloServiceGrpc.newBlockingStub(channel);
 
         // 构建消息

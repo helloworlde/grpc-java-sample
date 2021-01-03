@@ -52,7 +52,7 @@ public class HelloWorldClient {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("127.0.0.1", 9090)
                                                       .usePlaintext()
                                                       .build();
-
+        // 这里用 FutureStub 或者 AsyncStub 也是类似的，返回值变成 Future 或者传入 StreamObserver 即可
         HelloServiceGrpc.HelloServiceBlockingStub blockingStub = HelloServiceGrpc.newBlockingStub(channel);
 
         HelloMessage message = HelloMessage.newBuilder()
