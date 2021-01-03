@@ -14,7 +14,7 @@ gRPC Java 相关功能简单使用
 |[Bidirectional Stream](bidirectional-stream)| 双向流| 
 |[Interceptor](interceptor)|拦截器使用|
 |[Stream Tracer](stream-tracer)| 使用 StreamTracer 追踪流|
-|Log| 输出请求的详细 Log|
+|[Log](log)| 输出请求的详细 Log|
 |Binlog| 将请求信息输出到二进制日志中|
 |Retry Policy| 使用重试策略|
 |Hedging Policy|使用对冲策略|
