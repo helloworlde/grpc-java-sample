@@ -11,7 +11,7 @@ gRPC Java 相关功能简单使用
 |[AsyncStub](async-stub)|通过异步回调调用|
 |[ServerStream](server-stream)|Server 端流|
 |[ClientStream](client-stream)|Client 端流|
-|bidi-stream| 双向流| 
+|[BidirectionalStream](bidirectional-stream)| 双向流| 
 |Interceptor|拦截器使用|
 |StreamTracer| 使用 StreamTracer 追踪流|
 |NameResolver|自定义命名解析|
@@ -22,6 +22,8 @@ gRPC Java 相关功能简单使用
 |TLS|使用 TLS 加密|
 |Gateway| 使用 Gateway 对外提供 HTTP 服务| 
 |Channelz| 监控 Channel 行为|
+|Log| 输出请求的详细 Log|
+|Binlog| 将请求信息输出到二进制日志中|
 
 ## 参考文档
 
