@@ -10,7 +10,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class HelloWorldServer {
+public class InterceptorServer {
 
     @SneakyThrows
     public static void main(String[] args) {
