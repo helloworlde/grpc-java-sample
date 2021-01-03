@@ -13,7 +13,7 @@ gRPC Java 相关功能简单使用
 |[ClientStream](client-stream)|Client 端流|
 |[BidirectionalStream](bidirectional-stream)| 双向流| 
 |[Interceptor](interceptor)|拦截器使用|
-|StreamTracer| 使用 StreamTracer 追踪流|
+|[StreamTracer](stream-tracer)| 使用 StreamTracer 追踪流|
 |NameResolver|自定义命名解析|
 |LoadBalancer|自定义负载均衡策略|
 |HealthCheck| 使用健康检查|
