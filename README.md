@@ -9,7 +9,7 @@ gRPC Java 相关功能简单使用
 |[HelloWorld](helloworld)| 最简单的阻塞调用|
 |[FutureStub](future-stub)| 异步调用|
 |[AsyncStub](async-stub)|通过异步回调调用|
-|server-stream|server端流|
+|[ServerStream](server-stream)|Server 端流|
 |client-stream| 客户端流|
 |bidi-stream| 双向流| 
 |Interceptor|拦截器使用|
