@@ -1,0 +1,16 @@
+{
+  "methodConfig": [
+    {
+      "name": [
+        {
+          "service": "io.github.helloworlde.grpc.HelloService",
+          "method": "SayHello"
+        }
+      ],
+      "hedgingPolicy": {
+        "maxAttempts": 5,
+        "hedgingDelay": "0.5s"
+      }
+    }
+  ]
+}
