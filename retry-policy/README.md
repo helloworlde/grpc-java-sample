@@ -43,16 +43,6 @@ Client 需要添加重试的配置，并开启重试
 
 #### 1. 添加配置 service_config.json
 
-- `service` 表示添加重试策略的服务
-- `SayHello` 表示为这个方法配置重试策略
-- `maxAttempts` 表示最大重试 5 次
-- `initialBackoff` 表示重试请求初始延迟时间间隔
-- `maxBackoff` 表示重试请求最大延迟时间间隔
-- `backoffMultiplier` 表示重试请求退避指数
-- `retryableStatusCodes` 表示可重试的响应状态
-
-这些参数共同决定了重试的策略，具体可以参考 [gRPC Retry Design#retry-policy-capabilities](https://github.com/grpc/proposal/blob/master/A6-client-retries.md#retry-policy-capabilities)
-
 ```json
 {
   "methodConfig": [
@@ -77,6 +67,16 @@ Client 需要添加重试的配置，并开启重试
 }
 ```
 
+- `service` 表示添加重试策略的服务
+- `SayHello` 表示为这个方法配置重试策略
+- `maxAttempts` 表示最大重试 5 次
+- `initialBackoff` 表示重试请求初始延迟时间间隔
+- `maxBackoff` 表示重试请求最大延迟时间间隔
+- `backoffMultiplier` 表示重试请求退避指数
+- `retryableStatusCodes` 表示可重试的响应状态
+
+这些参数共同决定了重试的策略，具体可以参考 [gRPC Retry Design#retry-policy-capabilities](https://github.com/grpc/proposal/blob/master/A6-client-retries.md#retry-policy-capabilities)
+
 #### 2. 配置重试
 
 ```diff
@@ -85,13 +85,13 @@ Client 需要添加重试的配置，并开启重试
 public class HelloWorldClient {
 
     public static void main(String[] args) throws InterruptedException {
-+       // 读取重试配置文件
++       // 读取配置文件
 +       Map<String, ?> config = getServiceConfig();
 
         // 构建 Channel
         ManagedChannel channel = ManagedChannelBuilder.forAddress("127.0.0.1", 9090)
                                                       .usePlaintext()
-+                                                     // 添加重试配置，并开启重试
++                                                     // 添加配置，并开启重试
 +                                                     .defaultServiceConfig(config)
 +                                                     .enableRetry()
                                                       .build();

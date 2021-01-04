@@ -16,13 +16,13 @@ import java.util.concurrent.TimeUnit;
 public class RetryPolicyClient {
 
     public static void main(String[] args) throws InterruptedException {
-        // 读取重试配置文件
+        // 读取配置文件
         Map<String, ?> config = getServiceConfig();
 
         // 构建 Channel
         ManagedChannel channel = ManagedChannelBuilder.forAddress("127.0.0.1", 9090)
                                                       .usePlaintext()
-                                                      // 添加重试配置，并开启重试
+                                                      // 添加配置，并开启重试
                                                       .defaultServiceConfig(config)
                                                       .enableRetry()
                                                       .build();
@@ -44,7 +44,7 @@ public class RetryPolicyClient {
     }
 
     /**
-     * 读取重试配置文件
+     * 读取配置文件
      */
     @SuppressWarnings("all")
     @SneakyThrows
