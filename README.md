@@ -20,7 +20,7 @@ gRPC Java 相关功能简单使用
 |[Hedging Policy](hedging-policy)|使用对冲策略|
 |TLS|使用 TLS 加密|
 |[NameResolver](name-resolver)|自定义命名解析|
-|LoadBalancer|自定义负载均衡策略|
+|[LoadBalancer](load-balancer)|自定义负载均衡策略|
 |HealthCheck| 使用健康检查|
 |Gateway| 使用 Gateway 对外提供 HTTP 服务| 
 |Channelz| 监控 Channel 行为|
