@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class CustomBinaryLogSink implements BinaryLogSink {
@@ -35,7 +36,9 @@ public class CustomBinaryLogSink implements BinaryLogSink {
             return;
         }
         try {
-            message.writeDelimitedTo(out);
+            // message.writeDelimitedTo(out);
+
+            out.write(message.toString().getBytes(StandardCharsets.UTF_8));
             out.flush();
         } catch (IOException e) {
             log.info("Caught exception while writing", e);

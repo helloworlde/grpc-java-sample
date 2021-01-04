@@ -87,6 +87,67 @@ this.channel = ManagedChannelBuilder.forAddress(host, port)
 
 需要指定环境变量，设置需要输出的方法才会生效，设置 `GRPC_BINARY_LOG_CONFIG=*`，`*`代表打印所有的方法，具体指定可以参考 [Control Interface](https://github.com/helloworlde/proposal/blob/master/A16-binary-logging.md#control-interface)
 
+然后就会将请求的 header、message 等内容以二进制输出到文件中，如：
+
+```
+]
+
+�������� (2E
+1/io.github.helloworlde.grpc.HelloService/SayHello127.0.0.1:9090$
+```
+
+#### 5. 修改输出内容
+
+二进制文件无法直接读取，依赖读取之后再将其输出为其他格式才可以，可以在写入时从 `MessageLite` 读取内容，修改为想要输出的格式
+
+```java
+    public synchronized void write(MessageLite message) {
+        if (closed) {
+            log.info("Attempt to write after TempFileSink is closed.");
+            return;
+        }
+        try {
+-           // message.writeDelimitedTo(out);
+
++            out.write(message.toString().getBytes(StandardCharsets.UTF_8));
+            out.flush();
+        } catch (IOException e) {
+            log.info("Caught exception while writing", e);
+            closeQuietly();
+        }
+    }
+```
+
+这样，就会将 `MessageLite` 的内容直接转为 String 后输出：
+
+```
+timestamp {
+  seconds: 1609735898
+  nanos: 879000000
+}
+call_id: 1
+sequence_id_within_call: 5
+type: EVENT_TYPE_SERVER_MESSAGE
+logger: LOGGER_CLIENT
+message {
+  length: 14
+  data: "\n\fHello Binlog"
+}
+
+timestamp {
+  seconds: 1609735898
+  nanos: 882000000
+}
+call_id: 1
+sequence_id_within_call: 6
+type: EVENT_TYPE_SERVER_TRAILER
+logger: LOGGER_CLIENT
+trailer {
+  metadata {
+  }
+}
+```
+
 ## 实现原理
 
 在方法调用时，会判断有没有设置 binlog 对象，如果有则会封装方法，添加处理器和监听器；然后重新创建 `ServerMethodDefinition`；通过二进制日志拦截器 `io.grpc.services.BinlogHelper#getClientInterceptor` 拦截请求并写入日志
