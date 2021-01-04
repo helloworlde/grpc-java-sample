@@ -5,6 +5,7 @@ import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +15,9 @@ public class LogServer {
 
     @SneakyThrows
     public static void main(String[] args) {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
         // 构建 Server
         Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
                                           // 添加服务

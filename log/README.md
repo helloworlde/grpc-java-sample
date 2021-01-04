@@ -1,21 +1,69 @@
 # gRPC 输出底层库的日志
 
-gRPC 的库使用 `java.util.logging` 和 log4j 输出日志，可以使用 Logback，适配其他的日志，用于输出或调整级别，在调试或者排查问题时容易使用 ，这里使用 slf4j
+gRPC 的库使用 `java.util.logging` 输出日志，用于输出或调整级别，在调试或者排查问题时容易使用
 
-## 添加依赖
+## 使用 java.util.logging 
 
-因为 gRPC 内部以及 Netty 使用了多种库，适配较复杂，所以 Google 提供 logback 的适配实现
+#### 1. 设置日志级别
+
+会将所有的 gRPC 日志输出
+
+```java
+    public static void main(String[] args) throws InterruptedException{
+        setLogger("io.grpc");
+    }
+    
+    private static void setLogger(String className) {
+        Logger logger = Logger.getLogger(className);
+        logger.setLevel(Level.ALL);
+
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        logger.addHandler(handler);
+    }
+```
+
+#### 2. 输出
+
+```
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Channel<1>: (127.0.0.1:9090)] Resolved address: [[[/127.0.0.1:9090]/{}]], config={}
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Channel<1>: (127.0.0.1:9090)] Address resolved: [[[/127.0.0.1:9090]/{}]]
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Subchannel<3>: (127.0.0.1:9090)] Subchannel for [[[/127.0.0.1:9090]/{}]] created
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Channel<1>: (127.0.0.1:9090)] Child Subchannel started
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Channel<1>: (127.0.0.1:9090)] Entering CONNECTING state with picker: Picker{result=PickResult{subchannel=Subchannel<3>: (127.0.0.1:9090), streamTracerFactory=null, status=Status{code=OK, description=null, cause=null}, drop=false}}
+一月 04, 2021 11:06:39 上午 io.grpc.ChannelLogger log
+非常详细: [Subchannel<3>: (127.0.0.1:9090)] CONNECTING as requested
+一月 04, 2021 11:06:39 上午 io.grpc.netty.Utils getByteBufAllocator
+详细: Using custom allocator: forceHeapBuffer=false, defaultPreferDirect=true
+一月 04, 2021 11:06:39 上午 io.grpc.netty.Utils createByteBufAllocator
+详细: Creating allocator, preferDirect=true
+```
+
+## 使用 logback 
+
+使用 Logback 替换其他的日志，但是无法输出 FINEST 级别的日志
+
+#### 1. 添加依赖
 
 - build.gradle.kts
+
+添加 Slf4j 以及 logback 的依赖
 
 ```kotlin
 dependencies {
     implementation("org.slf4j:slf4j-api:${slf4jVersion}")
-    implementation("com.google.cloud:google-cloud-logging-logback:${logbackVersion}")
+    implementation("org.slf4j:jul-to-slf4j:${slf4jVersion}")
+    implementation("ch.qos.logback:logback-core:${logbackVersion}")
+    implementation("ch.qos.logback:logback-classic:${logbackVersion}")
 }
 ```
 
-## 添加 logback 配置
+#### 2. 添加 logback 配置
 
 - logback.xml
 
@@ -26,24 +74,38 @@ dependencies {
 
 <configuration debug="false" scan="false" scanPeriod="30 seconds">
 
-    <contextName>grpc-java-demo</contextName>
+    <contextName>grpc-java-sample</contextName>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!--  重置 java.util.logger 的级别 -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <appender name="CONSOLE_OUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
-                [%date{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] %level %logger - %message%n
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} - %msg %n
             </pattern>
         </encoder>
     </appender>
 
-    <root level="DEBUG">
-        <appender-ref ref="STDOUT"/>
+    <root level="TRACE">
+        <appender-ref ref="CONSOLE_OUT"/>
     </root>
 
 </configuration>
 ```
 
-## 输出
+#### 3. 添加 Slf4j 适配器
+
+在项目启动类中添加适配处理器，这样就会将 java.util.logging 的日志输出到 Slf4j
+
+```java
+SLF4JBridgeHandler.removeHandlersForRootLogger();
+SLF4JBridgeHandler.install();
+```
+
+#### 4. 输出
 
 ```
 [2021-01-03 20:44:46.453] [grpc-nio-worker-ELG-1-2] DEBUG io.grpc.netty.shaded.io.grpc.netty.NettyClientHandler - [id: 0xaeabbfb2, L:/127.0.0.1:62532 - R:/127.0.0.1:9090] OUTBOUND SETTINGS: ack=false settings={ENABLE_PUSH=0, MAX_CONCURRENT_STREAMS=0, INITIAL_WINDOW_SIZE=1048576, MAX_HEADER_LIST_SIZE=8192}

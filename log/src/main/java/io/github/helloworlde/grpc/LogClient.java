@@ -3,6 +3,7 @@ package io.github.helloworlde.grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +11,9 @@ import java.util.concurrent.TimeUnit;
 public class LogClient {
 
     public static void main(String[] args) throws InterruptedException {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+
         // 构建 Channel
         ManagedChannel channel = ManagedChannelBuilder.forAddress("127.0.0.1", 9090)
                                                       .usePlaintext()
