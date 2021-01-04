@@ -100,7 +100,7 @@ this.channel = ManagedChannelBuilder.forAddress(host, port)
 
 二进制文件无法直接读取，依赖读取之后再将其输出为其他格式才可以，可以在写入时从 `MessageLite` 读取内容，修改为想要输出的格式
 
-```java
+```diff
     public synchronized void write(MessageLite message) {
         if (closed) {
             log.info("Attempt to write after TempFileSink is closed.");
