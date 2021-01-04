@@ -1,6 +1,8 @@
 package io.github.helloworlde.grpc;
 
-import io.github.helloworlde.grpc.loadbalcner.CustomNameResolverProvider;
+import io.github.helloworlde.grpc.loadbalcner.CustomLoadBalancerProvider;
+import io.github.helloworlde.grpc.nameresolver.CustomNameResolverProvider;
+import io.grpc.LoadBalancerRegistry;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolverRegistry;
@@ -9,17 +11,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class NameResolverClient {
+public class LoadBalancerClient {
 
     public static void main(String[] args) throws InterruptedException {
         // 注册 NameResolver
         NameResolverRegistry.getDefaultRegistry().register(new CustomNameResolverProvider());
+        // 注册 LoadBalancer
+        LoadBalancerRegistry.getDefaultRegistry().register(new CustomLoadBalancerProvider());
 
         // 构建 Channel
         ManagedChannel channel = ManagedChannelBuilder.forTarget("grpc-server")
                                                       .usePlaintext()
                                                       // 指定负载均衡策略
-                                                      .defaultLoadBalancingPolicy("round_robin")
+                                                      .defaultLoadBalancingPolicy("custom_round_robin")
                                                       .build();
 
         for (int i = 0; i < 100; i++) {

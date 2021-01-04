@@ -1,4 +1,4 @@
-package io.github.helloworlde.grpc.loadbalcner;
+package io.github.helloworlde.grpc.nameresolver;
 
 import io.grpc.NameResolver;
 import io.grpc.NameResolverProvider;

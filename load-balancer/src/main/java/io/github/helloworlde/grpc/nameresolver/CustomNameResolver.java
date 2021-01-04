@@ -1,4 +1,4 @@
-package io.github.helloworlde.grpc.loadbalcner;
+package io.github.helloworlde.grpc.nameresolver;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.HealthClient;
