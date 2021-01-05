@@ -10,12 +10,16 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Slf4j
 public class TlsClient {
 
     @SneakyThrows
     public static void main(String[] args) {
+        setLogger("io.grpc");
 
         File trustCertCollectionFile = new File("tls/src/main/resources/cert/server.pem");
         SslContextBuilder builder = GrpcSslContexts.forClient();
@@ -41,5 +45,14 @@ public class TlsClient {
 
         // 等待终止
         channel.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    private static void setLogger(String className) {
+        Logger logger = Logger.getLogger(className);
+        logger.setLevel(Level.ALL);
+
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        logger.addHandler(handler);
     }
 }

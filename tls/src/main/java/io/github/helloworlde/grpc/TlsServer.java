@@ -12,12 +12,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Slf4j
 public class TlsServer {
 
     @SneakyThrows
     public static void main(String[] args) {
+        setLogger("io.grpc");
+
         // 初始化 SSL 上下文
         File keyCertChainFile = new File("tls/src/main/resources/cert/server.pem");
         File keyFile = new File("tls/src/main/resources/cert/server.key");
@@ -45,6 +50,15 @@ public class TlsServer {
 
         // 保持运行
         server.awaitTermination();
+    }
+
+    private static void setLogger(String className) {
+        Logger logger = Logger.getLogger(className);
+        logger.setLevel(Level.ALL);
+
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        logger.addHandler(handler);
     }
 }
 

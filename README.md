@@ -18,7 +18,7 @@ gRPC Java 相关功能简单使用
 |[BinaryLog](binlog)| 将请求信息输出到二进制日志中|
 |[Retry Policy](retry-policy)| 使用重试策略|
 |[Hedging Policy](hedging-policy)|使用对冲策略|
-|TLS|使用 TLS 加密|
+|[TLS](tls)|使用 TLS 加密|
 |[NameResolver](name-resolver)|自定义命名解析|
 |[HealthCheck](health-check)| 使用健康检查|
 |[LoadBalancer](load-balancer)|自定义负载均衡策略|
