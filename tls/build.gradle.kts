@@ -19,7 +19,7 @@ val protocVersion = "3.12.0"
 val slf4jVersion = "1.7.25"
 
 dependencies {
-    implementation("io.grpc:grpc-netty:${grpcVersion}")
+    implementation("io.grpc:grpc-netty-shaded:${grpcVersion}")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("org.slf4j:slf4j-api:${slf4jVersion}")

@@ -1,16 +1,14 @@
 package io.github.helloworlde.grpc;
 
 import io.grpc.Server;
-import io.grpc.netty.GrpcSslContexts;
-import io.grpc.netty.NettyServerBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
+import io.grpc.netty.shaded.io.netty.handler.ssl.ClientAuth;
 import io.grpc.stub.StreamObserver;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -26,15 +24,19 @@ public class TlsServer {
         // 初始化 SSL 上下文
         File keyCertChainFile = new File("tls/src/main/resources/cert/server.pem");
         File keyFile = new File("tls/src/main/resources/cert/server.key");
-        SslContextBuilder builder = SslContextBuilder.forServer(keyCertChainFile, keyFile);
-        SslContext sslContext = GrpcSslContexts.configure(builder).build();
+        // 用于校验其他证书的证书
+        // 配置后，客户端可以使用这个 CA 证书签名的证书，而不是服务端的证书
+        File clientCAsFile = new File("tls/src/main/resources/cert/server.pem");
 
-        // 构建 Server
-        Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
-                                          // 添加服务
+        Server server = NettyServerBuilder.forPort(8443)
                                           .addService(new HelloServiceImpl())
-                                          .sslContext(sslContext)
+                                          .intercept(new TlsServerInterceptor())
+                                          .sslContext(GrpcSslContexts.forServer(keyCertChainFile, keyFile)
+                                                                     .trustManager(clientCAsFile)
+                                                                     .clientAuth(ClientAuth.REQUIRE)
+                                                                     .build())
                                           .build();
+
 
         // 启动 Server
         server.start();

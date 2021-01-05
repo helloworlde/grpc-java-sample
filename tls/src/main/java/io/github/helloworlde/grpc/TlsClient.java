@@ -1,10 +1,10 @@
 package io.github.helloworlde.grpc;
 
 import io.grpc.ManagedChannel;
-import io.grpc.netty.GrpcSslContexts;
-import io.grpc.netty.NettyChannelBuilder;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
+import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
+import io.grpc.netty.shaded.io.netty.handler.ssl.SslContextBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +26,7 @@ public class TlsClient {
         SslContext sslContext = builder.trustManager(trustCertCollectionFile).build();
 
         // 构建 Channel
-        ManagedChannel channel = NettyChannelBuilder.forAddress("127.0.0.1", 9090)
+        ManagedChannel channel = NettyChannelBuilder.forAddress("127.0.0.1", 8443)
                                                     .overrideAuthority("localhost")
                                                     .sslContext(sslContext)
                                                     .build();
