@@ -1,6 +1,6 @@
 # gRPC 服务使用 TLS 加密
 
-gRPC 通过 Netty 支持对请求进行 TLS 加密
+gRPC 支持使用 TLS 对请求进行加密
 
 > SSL(Secure Socket Layer，安全套接字)，是面向连接的网络层和应用层协议之间的一种协议层；SSL 通过互相认证、使用数字签名确保完整性、使用加密确保隐私性，以实现客户端和服务端之间的安全通讯
 > 
@@ -177,6 +177,7 @@ SSLEngine Details: [
 
 ## 参考文档
 
+- [Authentication](https://grpc.io/docs/guides/auth/)
 - [Authentication](https://github.com/grpc/grpc-java/blob/master/SECURITY.md)
 - [在线RSA PKCS#1、PKCS#8格式转换工具](http://www.metools.info/code/c84.html)
 - [SslContextBuilder and Private Key](https://netty.io/wiki/sslcontextbuilder-and-private-key.html)
