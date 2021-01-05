@@ -3,7 +3,9 @@
 gRPC 通过 Netty 支持对请求进行 TLS 加密
 
 > SSL(Secure Socket Layer，安全套接字)，是面向连接的网络层和应用层协议之间的一种协议层；SSL 通过互相认证、使用数字签名确保完整性、使用加密确保隐私性，以实现客户端和服务端之间的安全通讯
+> 
 > TLS(Transport Layer Security, 传输层安全协议)，用于两个应用程序之间提供保密性和数据完整性
+> 
 > SSL是基于 HTTP 之下 TCP 之上的一个协议层，在SSL更新到3.0时，IETF对SSL3.0进行了标准化，并添加了少数机制(但是几乎和SSL3.0无差异)，标准化后的IETF更名为TLS1.0(Transport Layer Security 安全传输层协议)，可以说TLS就是SSL的新版本3.1
 
 ## 生成证书
@@ -12,7 +14,7 @@ gRPC 通过 Netty 支持对请求进行 TLS 加密
 
 1. 添加配置
 
-指定证书的配置，其中 `alt_names` 指定了访问的域名，如果实际域名与证书域名不一致，会导致连接失败
+指定证书的配置，其中 `CN` 指定了访问的域名，如果实际域名与证书域名不一致，会导致连接失败
 
 - certificate.conf
 
@@ -175,6 +177,9 @@ SSLEngine Details: [
 
 ## 参考文档
 
+- [Authentication](https://github.com/grpc/grpc-java/blob/master/SECURITY.md)
 - [在线RSA PKCS#1、PKCS#8格式转换工具](http://www.metools.info/code/c84.html)
 - [SslContextBuilder and Private Key](https://netty.io/wiki/sslcontextbuilder-and-private-key.html)
 - [配置密钥](https://opendocs.alipay.com/open/common/104740)
+- [grpc-tls](https://github.com/nleiva/grpc-tls)
+- [TLS详解](https://www.jianshu.com/p/1fc7130eb2c2)
