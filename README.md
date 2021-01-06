@@ -23,7 +23,7 @@ gRPC Java 相关功能简单使用
 |[HealthCheck](health-check)| 使用健康检查|
 |[LoadBalancer](load-balancer)|自定义负载均衡策略|
 |Gateway| 使用 Gateway 对外提供 HTTP 服务| 
-|Channelz| 监控 Channel 行为|
+|[Channelz](channelz)| 监控 Channel 行为|
 
 ## 参考文档
 
