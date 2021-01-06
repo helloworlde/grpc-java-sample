@@ -50,3 +50,13 @@ protobuf {
         }
     }
 }
+
+tasks.withType<Jar> {
+    archiveFileName.set("server.jar")
+    from(configurations.runtimeClasspath.get().map {
+        if (it.isDirectory) it else zipTree(it)
+    })
+    manifest {
+        attributes["Main-Class"] = "io.github.helloworlde.grpc.HelloWorldServer"
+    }
+}

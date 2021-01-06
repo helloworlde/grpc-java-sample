@@ -4,151 +4,44 @@ gRPC Gateway 可以代理 gRPC 服务，接收 HTTP 请求，并转为 gRPC 请�
 
 支持代理单个服务或者多个服务，当代理多个服务时，可以通过命名解析实现转发请求
 
+关于 Gateway 的使用细节可以参考 [helloworlde/grpc-gateway](https://github.com/helloworlde/grpc-gateway)
+
 ## 快速使用
 
-- 启动项目
+进入项目 gateway 目录，执行 Makefile 的命令
+
+- 启动 Server 端
+
+会执行构建，并启动 Server 端
 
 ```bash
-git clone https://github.com/helloworlde/grpc-gateway.git & cd grpc-gateway
-make all 
+make start-server 
+```
+
+- 启动 Gateway
+
+会构建并启动 Gateway，构建依赖 `buf`，详细请参考 [buf](https://docs.buf.build/installation)
+
+```bash
+make start-gw
 ```
 
 - 访问
 
 ```bash
-curl localhost:8090/hello\?message=world
+curl http://localhost:8090/hello\?message\=Gateway
 
-{"result":"Hello world"}%
+{"message":"Hello gateway"}%
 ```
 
 ## 实现
 
-### 安装依赖
+Server 端和 [helloworld](../helloworld) 一样
 
-- 安装 buf
-
-buf 用于代替 protoc 进行生成代码，可以避免使用复杂的 protoc 命令，避免 protoc 各种失败问题
-
-```bash
-brew tap bufbuild/buf
-brew install buf
-```
-
-- 安装 grpc-gateway
-
-```bash
-go install \
-    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
-    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2
-```
-
-- 添加 buf 配置文件 buf.gen.yaml
-
-```diff
-version: v1beta1
-plugins:
-  - name: go
-    out: proto
-    opt: paths=source_relative
-  - name: go-grpc
-    out: proto
-    opt: paths=source_relative,require_unimplemented_servers=false
-```
-
-- 添加配置文件 buf.yaml
-
-```yaml
-version: v1beta1
-build:
-  roots:
-    - proto
-```
-
-### 实现服务端
-
-- 定义 proto
-
-```protobuf
-syntax = "proto3";
-
-package io.github.helloworlde;
-option go_package = "github.com/helloworlde/grpc-gateway;grpc_gateway";
-option java_package = "io.github.helloworlde";
-option java_multiple_files = true;
-option java_outer_classname = "HelloGrpc";
-
-service HelloService {
-    rpc Hello (HelloMessage) returns (HelloResponse) {
-    }
-}
-
-message HelloMessage {
-    string message = 1;
-}
-
-message HelloResponse {
-    string result = 1;
-}
-```
-
-- 生成代码
-
-```bash
-buf generate
-```
-
-- 实现接口
-
-```go
-import (
-    "context"
-
-    pb "github.com/helloworlde/grpc-gateway/proto/api"
-)
-
-type HelloService struct {
-}
-
-func (h *HelloService) Hello(ctx context.Context, message *pb.HelloMessage) (*pb.HelloResponse, error) {
-	helloMessage := "Hello " + message.GetMessage()
-
-	response := pb.HelloResponse{Result: helloMessage}
-
-	return &response, nil
-}
-
-```
-
-- 启动 Server
-
-```go
-func StartGrpcServer() {
-	listener, err := net.Listen("tcp", ":9090")
-	if err != nil {
-		log.Fatalln("Listen gRPC port failed: ", err)
-	}
-
-	server := grpc.NewServer()
-	pb.RegisterHelloServiceServer(server, &helloService)
-
-	log.Println("Start gRPC Server on 0.0.0.0:9090")
-	err = server.Serve(listener)
-	if err != nil {
-		log.Fatalln("Start gRPC Server failed: ", err)
-	}
-
-}
-```
-
-```go
-func main() {
-  server.StartGrpcServer()
-}
-```
-
-启动 Server 后，会监听 8090 端口，对外提供服务
 
 ### 实现 Gateway
+
+Gateway 的详细内容请参考 [helloworlde/grpc-gateway](https://github.com/helloworlde/grpc-gateway)
 
 - 添加 google.api 的 proto
 
@@ -157,17 +50,32 @@ func main() {
 - 修改业务的 proto 文件
 
 ```diff
-
-+import "google/api/annotations.proto";
-
-service HelloService{
-  rpc Hello(HelloMessage) returns (HelloResponse){
-+    option (google.api.http) = {
-+      get: "/hello"
-+    };
+  syntax = "proto3";
+  
+  package io.github.helloworlde.grpc;
+  
++ import "google/api/annotations.proto";
+  
++ option go_package = "api;grpc_gateway";
+  option java_package = "io.github.helloworlde.grpc";
+  option java_multiple_files = true;
+  option java_outer_classname = "HelloWorldGrpc";
+  
+  service HelloService{
+    rpc SayHello(HelloMessage) returns (HelloResponse){
++     option (google.api.http) = {
++       get: "/hello"
++     };
+    }
   }
-}
-
+  
+  message HelloMessage {
+    string message = 1;
+  }
+  
+  message HelloResponse {
+    string message = 1;
+  }
 ```
 
 - 修改 buf.gen.yaml，添加生成 Gateway 代码的配置
@@ -224,19 +132,8 @@ func StartGwServer() {
 
 ```go
 func main() {
-	go server.StartGrpcServer()
 	server.StartGwServer()
 }
-```
-
-### 测试
-
-- 启动应用
-
-```bash
-curl localhost:8090/hello\?message=world
-
-{"result":"Hello world"}%
 ```
 
 ## 参考文档
