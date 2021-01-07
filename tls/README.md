@@ -67,8 +67,9 @@ public class TlsServer {
         // 初始化 SSL 上下文
 +       File keyCertChainFile = new File("tls/src/main/resources/cert/server.pem");
 +       File keyFile = new File("tls/src/main/resources/cert/server.key");
-+       SslContextBuilder builder = SslContextBuilder.forServer(keyCertChainFile, keyFile);
-+       SslContext sslContext = GrpcSslContexts.configure(builder).build();
++       SslContext sslContext = GrpcSslContexts.forServer(keyCertChainFile, keyFile)
++                                              .clientAuth(ClientAuth.OPTIONAL)
++                                              .build();
 
         // 构建 Server
         Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
@@ -109,8 +110,9 @@ public class TlsClient {
     public static void main(String[] args) {
 
 +       File trustCertCollectionFile = new File("tls/src/main/resources/cert/server.pem");
-+       SslContextBuilder builder = GrpcSslContexts.forClient();
-+       SslContext sslContext = builder.trustManager(trustCertCollectionFile).build();
++       SslContext sslContext = GrpcSslContexts.forClient()
++                                           .trustManager(trustCertCollectionFile)
++                                           .build();
 
         // 构建 Channel
         ManagedChannel channel = NettyChannelBuilder.forAddress("127.0.0.1", 9090)

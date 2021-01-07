@@ -4,7 +4,6 @@ import io.grpc.ManagedChannel;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyChannelBuilder;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,8 +21,9 @@ public class TlsClient {
         setLogger("io.grpc");
 
         File trustCertCollectionFile = new File("tls/src/main/resources/cert/server.pem");
-        SslContextBuilder builder = GrpcSslContexts.forClient();
-        SslContext sslContext = builder.trustManager(trustCertCollectionFile).build();
+        SslContext sslContext = GrpcSslContexts.forClient()
+                                            .trustManager(trustCertCollectionFile)
+                                            .build();
 
         // 构建 Channel
         ManagedChannel channel = NettyChannelBuilder.forAddress("127.0.0.1", 9090)

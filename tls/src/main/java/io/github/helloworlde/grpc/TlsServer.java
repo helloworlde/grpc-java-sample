@@ -4,8 +4,8 @@ import io.grpc.Server;
 import io.grpc.netty.GrpcSslContexts;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
+import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,8 +26,10 @@ public class TlsServer {
         // 初始化 SSL 上下文
         File keyCertChainFile = new File("tls/src/main/resources/cert/server.pem");
         File keyFile = new File("tls/src/main/resources/cert/server.key");
-        SslContextBuilder builder = SslContextBuilder.forServer(keyCertChainFile, keyFile);
-        SslContext sslContext = GrpcSslContexts.configure(builder).build();
+
+        SslContext sslContext = GrpcSslContexts.forServer(keyCertChainFile, keyFile)
+                                               .clientAuth(ClientAuth.OPTIONAL)
+                                               .build();
 
         // 构建 Server
         Server server = NettyServerBuilder.forAddress(new InetSocketAddress(9090))
