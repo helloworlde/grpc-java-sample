@@ -21,9 +21,6 @@ service HelloService{
 }
 
 message HelloMessage {
-  // Set of FileDescriptorProtos which describe the type and its dependencies.
-  google.protobuf.FileDescriptorSet descriptor_set = 1;
-
   string message = 2;
 
   repeated google.protobuf.Any details = 3;

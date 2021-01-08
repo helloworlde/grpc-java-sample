@@ -16,12 +16,15 @@ repositories {
 val grpcVersion = "1.34.1"
 val protocVersion = "3.12.0"
 val slf4jVersion = "1.7.25"
+val protoUtilVersion = "3.14.0"
 
 dependencies {
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
+    implementation("com.google.protobuf:protobuf-java-util:${protoUtilVersion}")
+
     implementation("org.slf4j:slf4j-api:${slf4jVersion}")
     implementation("org.slf4j:slf4j-simple:${slf4jVersion}")
 
