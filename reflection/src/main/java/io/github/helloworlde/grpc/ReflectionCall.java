@@ -41,31 +41,17 @@ public class ReflectionCall {
         // 使用 Channel 构建 BlockingStub
         ServerReflectionGrpc.ServerReflectionStub reflectionStub = ServerReflectionGrpc.newStub(channel);
         // 响应观察器
-        StreamObserver<ServerReflectionResponse> streamObserver = getResponseStreamObserver(channel, methodSymbol, requestContent);
-        // 请求观察器
-        StreamObserver<ServerReflectionRequest> requestStreamObserver = reflectionStub.serverReflectionInfo(streamObserver);
-
-        // 构建并发送获取方法文件描述请求
-        ServerReflectionRequest getFileContainingSymbolRequest = ServerReflectionRequest.newBuilder()
-                                                                                        .setFileContainingSymbol(methodSymbol)
-                                                                                        .build();
-        requestStreamObserver.onNext(getFileContainingSymbolRequest);
-        channel.awaitTermination(100, TimeUnit.SECONDS);
-    }
-
-    private static StreamObserver<ServerReflectionResponse> getResponseStreamObserver(ManagedChannel channel, String methodFullName, String requestContent) {
-        return new StreamObserver<ServerReflectionResponse>() {
+        StreamObserver<ServerReflectionResponse> streamObserver = new StreamObserver<ServerReflectionResponse>() {
             @Override
             public void onNext(ServerReflectionResponse response) {
                 try {
                     // 只需要关注文件描述类型的响应
                     if (response.getMessageResponseCase() == ServerReflectionResponse.MessageResponseCase.FILE_DESCRIPTOR_RESPONSE) {
                         List<ByteString> fileDescriptorProtoList = response.getFileDescriptorResponse().getFileDescriptorProtoList();
-                        handleResponse(fileDescriptorProtoList, channel, methodFullName, requestContent);
+                        handleResponse(fileDescriptorProtoList, channel, methodSymbol, requestContent);
                     } else {
                         log.warn("未知响应类型: " + response.getMessageResponseCase());
                     }
-
                 } catch (Exception e) {
                     log.error("处理响应失败: {}", e.getMessage(), e);
                 }
@@ -81,6 +67,15 @@ public class ReflectionCall {
                 log.info("Complete");
             }
         };
+        // 请求观察器
+        StreamObserver<ServerReflectionRequest> requestStreamObserver = reflectionStub.serverReflectionInfo(streamObserver);
+
+        // 构建并发送获取方法文件描述请求
+        ServerReflectionRequest getFileContainingSymbolRequest = ServerReflectionRequest.newBuilder()
+                                                                                        .setFileContainingSymbol(methodSymbol)
+                                                                                        .build();
+        requestStreamObserver.onNext(getFileContainingSymbolRequest);
+        channel.awaitTermination(10, TimeUnit.SECONDS);
     }
 
     /**
@@ -90,7 +85,6 @@ public class ReflectionCall {
                                        ManagedChannel channel,
                                        String methodFullName,
                                        String requestContent) {
-
         try {
             // 解析方法和服务名称
             String fullServiceName = extraPrefix(methodFullName);
@@ -100,9 +94,6 @@ public class ReflectionCall {
 
             // 根据响应解析 FileDescriptor
             Descriptors.FileDescriptor fileDescriptor = getFileDescriptor(fileDescriptorProtoList, packageName, serviceName);
-            if (fileDescriptor == null) {
-                throw new IllegalArgumentException("文件描述不存在");
-            }
 
             // 查找服务描述
             Descriptors.ServiceDescriptor serviceDescriptor = fileDescriptor.getFile().findServiceByName(serviceName);
@@ -153,6 +144,9 @@ public class ReflectionCall {
     }
 
 
+    /**
+     * 根据包名和服务名查找相应的文件描述
+     */
     private static DescriptorProtos.FileDescriptorProto findServiceFileDescriptorProto(String packageName,
                                                                                        String serviceName,
                                                                                        Map<String, DescriptorProtos.FileDescriptorProto> fileDescriptorProtoMap) {
@@ -178,6 +172,9 @@ public class ReflectionCall {
         return content.substring(0, index);
     }
 
+    /**
+     * 获取后缀
+     */
     private static String extraSuffix(String content) {
         int index = content.lastIndexOf(".");
         return content.substring(index + 1);
@@ -186,7 +183,8 @@ public class ReflectionCall {
     /**
      * 获取依赖类型
      */
-    private static Descriptors.FileDescriptor[] getDependencies(DescriptorProtos.FileDescriptorProto proto, Map<String, DescriptorProtos.FileDescriptorProto> finalDescriptorProtoMap) {
+    private static Descriptors.FileDescriptor[] getDependencies(DescriptorProtos.FileDescriptorProto proto,
+                                                                Map<String, DescriptorProtos.FileDescriptorProto> finalDescriptorProtoMap) {
         return proto.getDependencyList()
                     .stream()
                     .map(finalDescriptorProtoMap::get)
@@ -194,10 +192,13 @@ public class ReflectionCall {
                     .toArray(Descriptors.FileDescriptor[]::new);
     }
 
+    /**
+     * 将 FileDescriptorProto 转为 FileDescriptor
+     */
     @SneakyThrows
-    private static Descriptors.FileDescriptor toFileDescriptor(DescriptorProtos.FileDescriptorProto f,
+    private static Descriptors.FileDescriptor toFileDescriptor(DescriptorProtos.FileDescriptorProto fileDescriptorProto,
                                                                Descriptors.FileDescriptor[] dependencies) {
-        return Descriptors.FileDescriptor.buildFrom(f, dependencies);
+        return Descriptors.FileDescriptor.buildFrom(fileDescriptorProto, dependencies);
     }
 
 
@@ -236,6 +237,9 @@ public class ReflectionCall {
         log.info("响应: {}", responseContent);
     }
 
+    /**
+     * 重新生成方法描述
+     */
     private static MethodDescriptor<DynamicMessage, DynamicMessage> generateMethodDescriptor(Descriptors.MethodDescriptor originMethodDescriptor) {
         // 生成方法全名
         String fullMethodName = MethodDescriptor.generateFullMethodName(originMethodDescriptor.getService().getFullName(), originMethodDescriptor.getName());
