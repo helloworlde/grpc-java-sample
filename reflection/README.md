@@ -110,6 +110,7 @@ public class ReflectionClient {
 
         // 列举所有的服务
         ServerReflectionRequest listServiceRequest = ServerReflectionRequest.newBuilder()
+                                                                            .setListServices("")
                                                                             .build();
         requestStreamObserver.onNext(listServiceRequest);
     }

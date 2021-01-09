@@ -26,7 +26,8 @@ public class ReflectionClient {
         StreamObserver<ServerReflectionResponse> streamObserver = new StreamObserver<ServerReflectionResponse>() {
             @Override
             public void onNext(ServerReflectionResponse response) {
-                log.info("{}", response);
+                ServerReflectionResponse.MessageResponseCase messageResponseCase = response.getMessageResponseCase();
+                log.info("Case: {}, Response: {}",messageResponseCase, response);
             }
 
             @Override
@@ -105,6 +106,7 @@ public class ReflectionClient {
     private static ServerReflectionRequest listService() {
         // 构建消息
         return ServerReflectionRequest.newBuilder()
+                                      .setListServices("")
                                       .build();
     }
 }
