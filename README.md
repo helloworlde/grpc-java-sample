@@ -25,7 +25,8 @@ gRPC Java 相关功能简单使用
 |[Gateway](gateway)| 使用 Gateway 对外提供 HTTP 服务| 
 |[Channelz](channelz)| 监控 Channel 行为|
 |[Reflection](reflection)| gRPC 服务反射接口，获取服务信息，实现泛化调用|
-|[SpringBoot]| SpringBoot 中使用 gRPC |
+
+- [gRPC 模块与工具](doc/index.md)
 
 ## 参考文档
 
