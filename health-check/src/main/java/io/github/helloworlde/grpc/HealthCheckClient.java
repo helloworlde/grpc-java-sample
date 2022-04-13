@@ -1,6 +1,6 @@
 package io.github.helloworlde.grpc;
 
-import io.github.helloworlde.grpc.loadbalcner.CustomNameResolverProvider;
+import io.github.helloworlde.grpc.nameresovler.CustomNameResolverProvider;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.NameResolverRegistry;
