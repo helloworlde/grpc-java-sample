@@ -35,7 +35,7 @@ dependencies {
     implementation("org.slf4j:jul-to-slf4j:${slf4jVersion}")
     implementation("ch.qos.logback:logback-core:${logbackVersion}")
     implementation("ch.qos.logback:logback-classic:${logbackVersion}")
-
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
 
     testImplementation("junit:junit:4.13")
 }

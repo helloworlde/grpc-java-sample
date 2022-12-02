@@ -24,6 +24,7 @@ dependencies {
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("org.slf4j:slf4j-api:${slf4jVersion}")
     implementation("org.slf4j:slf4j-simple:${slf4jVersion}")
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
     implementation("com.orbitz.consul:consul-client:${consulVersion}")
     testImplementation("junit:junit:4.13")
 }
